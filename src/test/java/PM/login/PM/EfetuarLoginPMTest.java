@@ -79,7 +79,31 @@ public class EfetuarLoginPMTest {
         } catch(Exception e) {
             assertEquals("Wrong password", e.getMessage());
         }
-    }        
+    }
+    
+    
+    @Test
+    public void testUserBlocked() {
+        UserDAO userDaoMock = mock(UserDAO.class);
+        User usuarioBloqueado = new User("andre", "1234", UserType.NORMALUSER);
+        usuarioBloqueado.setBlock(true);
+        
+        when(userDaoMock.getByName("andre"))
+                .thenReturn(usuarioBloqueado);
+        
+        PerformLoginPM efetuarLoginPM = new PerformLoginPM();
+        efetuarLoginPM.setLogin("andre");
+        efetuarLoginPM.setPassword("1234");
+
+        efetuarLoginPM.setUserDao(userDaoMock);
+        
+        try {
+            efetuarLoginPM.pressLogin();
+            fail();
+        } catch(Exception e) {
+            assertEquals("User blocked", e.getMessage());
+        }
+    }
     
     @Test
     public void testAdminUserLogin() throws Exception {

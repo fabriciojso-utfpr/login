@@ -53,6 +53,9 @@ public class PerformLoginPM {
         if(! user.getPassword().equals(password))
             throw new Exception("Wrong password");
         
+        if(user.isBlock())
+            throw new Exception("User blocked");
+        
         PagePM pagePM = null;
         if(user.getType() == UserType.ADMIN)
             pagePM = new AdminMainPagePM();
