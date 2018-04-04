@@ -12,6 +12,7 @@ public class PerformLoginPM {
     String login;
     String password;
     UserDAO userDao;
+    int totalErrors = 0;
 
     public PerformLoginPM() {
         login = "";
@@ -47,14 +48,22 @@ public class PerformLoginPM {
             throw new Exception("Empty fields");
         
         User user = userDao.getByName(login);
-        if(user == null)
+                 
+        if(user == null){
             throw new Exception("Inexistent username");
+        }
         
-        if(! user.getPassword().equals(password))
-            throw new Exception("Wrong password");
-        
-        if(user.isBlock())
+        if(user.isBlock()){
             throw new Exception("User blocked");
+        }
+                
+        if(! user.getPassword().equals(password)){
+            if(++totalErrors == 3){
+                user.setBlock(true);
+            }
+            throw new Exception("Wrong password");
+        }
+        
         
         PagePM pagePM = null;
         if(user.getType() == UserType.ADMIN)
