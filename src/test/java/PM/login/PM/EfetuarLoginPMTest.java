@@ -164,4 +164,5 @@ public class EfetuarLoginPMTest {
         assertTrue(pagePM instanceof NormalUserMainPagePM);
         assertEquals("user", pagePM.getLoggedUser().getUsername());
     }
-}
+} 
+ 
