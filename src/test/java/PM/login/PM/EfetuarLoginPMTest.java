@@ -165,4 +165,3 @@ public class EfetuarLoginPMTest {
         assertEquals("user", pagePM.getLoggedUser().getUsername());
     }
 }
-
