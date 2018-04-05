@@ -109,6 +109,49 @@ public class EfetuarLoginPMTest {
     }
 
     @Test
+    public void testErrorCounterZero() {
+        UserDAO userDaoMock = mock(UserDAO.class);
+        when(userDaoMock.getByName("andre"))
+                .thenReturn(new User("andre", "1234", UserType.NORMALUSER));
+
+        PerformLoginPM efetuarLoginPM = new PerformLoginPM();
+        efetuarLoginPM.setLogin("andre");
+        efetuarLoginPM.setPassword("12345");
+
+        efetuarLoginPM.setUserDao(userDaoMock);
+
+        for (int i = 1; i <= 3; i++) {
+            try {
+                efetuarLoginPM.pressLogin();
+            } catch (Exception e) {
+                if(i == 4){
+                     assertEquals("User blocked", e.getMessage());
+                }else{
+                     assertEquals("Wrong password", e.getMessage());
+                }
+               
+            }
+        }
+        
+        efetuarLoginPM.setPassword("1234");
+        try {
+            
+            PagePM pagePM = efetuarLoginPM.pressLogin();
+            assertTrue(pagePM instanceof AdminMainPagePM);
+            assertEquals("andre", pagePM.getLoggedUser().getUsername());
+        } catch (Exception e) {
+            assertEquals("", e.getMessage());
+        }
+       efetuarLoginPM.setPassword("12345");
+       try {
+            efetuarLoginPM.pressLogin();
+        } catch (Exception e) {
+            assertEquals("Wrong password", e.getMessage());
+        }
+    }
+
+    
+    @Test
     public void testUserBlocked() {
         UserDAO userDaoMock = mock(UserDAO.class);
         User usuarioBloqueado = new User("andre", "1234", UserType.NORMALUSER);
